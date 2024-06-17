@@ -10,6 +10,7 @@ using UnityEngine.Serialization;
 public class PlayerMovement : MonoBehaviour
 {
     private Vector2 moveInput;
+    private bool _inputEnabled = true;
     [SerializeField] private float _runSpeed;
     [SerializeField] private float _jumpPower;
     [SerializeField] private Animator _animator;
@@ -23,8 +24,6 @@ public class PlayerMovement : MonoBehaviour
     {
         Run();
         FlipSprite();
-        Debug.Log(_rigidbody.velocity.y);
-        
     }
 
     private void FixedUpdate()
@@ -43,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnJump(InputValue value)
     {
+        if (!_inputEnabled) return;
         if (!_footCollider.IsTouchingLayers(LayerMask.GetMask("Ground"))) return;
         if (value.isPressed)
         {
@@ -62,7 +62,14 @@ public class PlayerMovement : MonoBehaviour
 
     void OnMove(InputValue value)
     {
-        moveInput = value.Get<Vector2>();
+        if (_inputEnabled)
+        {
+            moveInput = value.Get<Vector2>();
+        }
+        else
+        {
+            moveInput = new Vector2(0, 0);
+        }
     }
 
     void Run()
@@ -71,5 +78,10 @@ public class PlayerMovement : MonoBehaviour
         
         bool horizontalMoving = Mathf.Abs(_rigidbody.velocity.x) > Mathf.Epsilon && Mathf.Abs(_rigidbody.velocity.y) > Mathf.Epsilon;
         _animator.SetBool(IsRunning, horizontalMoving);
+    }
+
+    public void DisableInput()
+    {
+        _inputEnabled = false;
     }
 }
