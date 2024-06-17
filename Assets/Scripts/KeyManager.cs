@@ -7,9 +7,11 @@ namespace DefaultNamespace
 {
     public class KeyManager : MonoBehaviour
     {
+        [SerializeField] private KeysUI _keysUI;
         [SerializeField] private List<Key> _keys;
         [SerializeField] private Portal _portal;
-        private int _collectedKeys;
+        public int CollectedKeys { get; private set; }
+        public int MaxKeys => _keys.Count;
 
         private void Awake()
         {
@@ -21,8 +23,9 @@ namespace DefaultNamespace
 
         private void TakeKey()
         {
-            _collectedKeys += 1;
-            if (_collectedKeys == _keys.Count)
+            CollectedKeys += 1;
+            _keysUI.UpdateText(this);
+            if (CollectedKeys == _keys.Count)
             {
                 _portal.gameObject.SetActive(true);
             }
